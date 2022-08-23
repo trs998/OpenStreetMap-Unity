@@ -12,6 +12,7 @@ public class OSMway: OSM_Func
     public bool IsBuilding {get; private set; }
     public string Highway {get; private set; }
     public float Height {get; private set; }
+    private float StoryHeight;
     public string Leisure{get;private set;}
     public string Nature{get;private set;}
     public string Name{get; private set;}
@@ -20,7 +21,8 @@ public class OSMway: OSM_Func
     public OSMway(XmlNode node)
     {
         NodeIDs = new List<ulong>();
-        Height = 10.0f; // ! Originally 3.0f (need to fix the building height - building:levels not being recognized)
+        Height = 3.0f;
+        StoryHeight = 2.7f;
         ID = GetAttribute<ulong>("id", node.Attributes);//wayID
         Visible = GetAttribute<bool>("visible", node.Attributes);
 
@@ -56,13 +58,12 @@ public class OSMway: OSM_Func
 
             if (key == "height")
             {
-                Height = GetAttribute<float>("v", t.Attributes);
+                Height = float.parse(GetAttribute<string>("v", t.Attributes));
             }
             else if (key == "building:levels")
             {
-                //Debug.Log(t.Attributes["v"].Value);
                 IsBuilding = true;
-                Height = GetAttribute<float>("v", t.Attributes);//If number is "全角"-japanese character, doesn't go well :(
+                Height = StoryHeight * float.Parse(GetAttribute<string>("v", t.Attributes));//If number is "全角"-japanese character, doesn't go well :(
             }
             else if (key == "building")
             {
